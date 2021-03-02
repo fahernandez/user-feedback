@@ -1,0 +1,7 @@
+pandas
+dash
+cyhunspell
+nltk
+numpy
+scipy
+sklearn

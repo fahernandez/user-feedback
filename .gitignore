@@ -5,6 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
+.idea/
+include/proccesed_comments.csv
 
 # Distribution / packaging
 .Python

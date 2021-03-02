@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  user-feedback:
+    build:
+      context: .
+    image: user-feedback:$VERSION
+    container_name: user-feedback
+    ports:
+      - "5050:5050"
+    environment:
+      - TARGET=$TARGET
+    volumes:
+      - .:/code
+    restart: unless-stopped
