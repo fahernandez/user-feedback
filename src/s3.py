@@ -2,7 +2,7 @@ from sagemaker import get_execution_role
 import pandas as pd
 import boto3
 
-bucket_name = 's3://sagemaker-data-analysis-projects/user-feedback/'
+bucket_name = 's3://sagemaker-user-feedback/'
 role = get_execution_role()
 
 def save_file(result, key_name):
