@@ -3,7 +3,7 @@ services:
   user-feedback:
     build:
       context: .
-    image: user-feedback:$VERSION
+    image: 813076059213.dkr.ecr.us-east-1.amazonaws.com/huli-user-feedback:$VERSION
     container_name: user-feedback
     ports:
       - "5050:5050"
