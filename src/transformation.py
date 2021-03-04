@@ -19,13 +19,13 @@ h = Hunspell('es-CR', hunspell_data_dir='/code/include/huspell/dic/es-CR')
 spanishStemmer = SnowballStemmer("spanish", ignore_stopwords=True)
 correctedToken = pd.read_json('/code/include/correction.json', orient='index')
 comments = pd.read_csv('/code/include/proccesed_comments.csv', index_col='id')
-variables = comments.drop('primary_category', axis = 1)
+variables = comments.drop('primary_category', axis=1)
 response = comments['primary_category'].values
 
 
 def predict(model, comment, creator_department, resource_type):
     if comment == "":
-        return 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+        return 'Ninguno', ["0.0%", "0.0%", "0.0%", "0.0%", "0.0%", "0.0%"]
 
     test_predict = pd.DataFrame(data=[
         {
@@ -47,8 +47,8 @@ def predict(model, comment, creator_department, resource_type):
             ('Stemmer', Stemmer()),
         ]), ['tokens']),
     ], remainder='passthrough')
-    test_predict['tokens'] = test_predict.\
-        apply(lambda row:  word_tokenize(row['comment']), axis=1)
+    test_predict['tokens'] = test_predict. \
+        apply(lambda row: word_tokenize(row['comment']), axis=1)
     proccessed = preprocess.fit_transform(test_predict.reset_index())
 
     proccessed = pd.DataFrame(data=proccessed, columns=[
@@ -60,11 +60,17 @@ def predict(model, comment, creator_department, resource_type):
     ])
 
     proccessed['comment'] = proccessed['tokens'].apply(lambda x: ' '.join(x))
-
-    return model.predict_proba(proccessed[[
+    to_predict = proccessed[[
         'creator_department',
         'resource_type',
-        'comment']])
+        'comment']]
+
+    label = model.predict(to_predict)[0]
+    prob = model.predict_proba(to_predict)[0]
+
+    return label.capitalize(), ['{}%'.format(x) for
+                                x in np.round(np.array([p * 100
+                                                        for p in prob]), 2)]
 
 
 def fit_smv():
