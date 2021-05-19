@@ -9,6 +9,7 @@ services:
       - "5050:5050"
     environment:
       - TARGET=$TARGET
+      - PYTHONPATH=/data-analysis/src
     volumes:
-      - .:/code
+      - .:/data-analysis
     restart: unless-stopped

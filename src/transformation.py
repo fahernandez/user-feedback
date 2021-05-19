@@ -15,10 +15,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import SVC
 import logging as log
 
-h = Hunspell('es-CR', hunspell_data_dir='/code/include/huspell/dic/es-CR')
+h = Hunspell('es-CR', hunspell_data_dir='/data-analysis/include/huspell/dic/es-CR')
 spanishStemmer = SnowballStemmer("spanish", ignore_stopwords=True)
-correctedToken = pd.read_json('/code/include/correction.json', orient='index')
-comments = pd.read_csv('/code/include/proccesed_comments.csv', index_col='id')
+correctedToken = pd.read_json('/data-analysis/include/correction.json', orient='index')
+comments = pd.read_csv('/data-analysis/include/proccesed_comments.csv', index_col='id')
 variables = comments.drop('primary_category', axis=1)
 response = comments['primary_category'].values
 
