@@ -1,5 +1,6 @@
 import dash
 import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from src.transformation import fit_smv, predict
@@ -7,30 +8,30 @@ from src.no_supervised import clust_model_comparisson_graph
 from src.supervised import class_model_comparisson
 from src.descriptive import get_desc_graph
 
-
 # https://towardsdatascience.com/how-to-use-docker-to-deploy-a-dashboard-app-on-aws-8df5fb322708
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__,
-                external_stylesheets=external_stylesheets,
+                external_stylesheets=[dbc.themes.LUMEN],
+                # external_stylesheets=external_stylesheets,
                 suppress_callback_exceptions=True)
 model = None
 
 app.layout = html.Div([
-    dcc.Tabs(id='app-content-tabs', value='tab-1', children=[
-        dcc.Tab(label='Predicción automática', value='tab-1'),
-        dcc.Tab(label='Resultados análisis supervisado', value='tab-2'),
-        dcc.Tab(label='Resultados análisis no supervisado', value='tab-3'),
-        dcc.Tab(label='Análisis descriptivo', value='tab-4'),
-    ], style={'padding-bottom': '10px'}),
-    html.Div(id='app-content')
+    dbc.Tabs(id="tabs", active_tab="pred", children=[
+            dbc.Tab(label="Predicción automática", tab_id="pred"),
+            dbc.Tab(label="Resultados análisis supervisado", tab_id="sup"),
+            dbc.Tab(label="Resultados análisis no supervisado", tab_id="no-sup"),
+            dbc.Tab(label="Análisis descriptivo", tab_id="desc"),
+        ]),
+    dbc.Card(id="content", body=True)
 ])
 
 
-@app.callback(Output('app-content', 'children'),
-              Input('app-content-tabs', 'value'))
+@app.callback(Output('content', 'children'),
+              Input('tabs', 'active_tab'))
 def render_content(tab):
-    if tab == 'tab-2':
+    if tab == 'sup':
         return html.Div([
             dcc.Graph(
                 id='comparison-graph',
@@ -42,7 +43,7 @@ def render_content(tab):
             'border': "2px solid black",
             'padding': '10px'
         })
-    elif tab == 'tab-3':
+    elif tab == 'no-sup':
         return html.Div([
             dcc.Graph(
                 id='no-sup-graph',
@@ -54,124 +55,194 @@ def render_content(tab):
             'border': "2px solid black",
             'padding': '10px'
         })
-    elif tab == 'tab-4':
+    elif tab == 'desc':
         return html.Div(
             [
                 html.Div([
-                    "Departamento de la Compañia: ", dcc.Dropdown(
-                        id='creator-department-desc',
-                        options=[
-                            {
-                                'label': 'Customer Success',
-                                'value': 'Customer Success'
-                            },
-                            {
-                                'label': 'Sales',
-                                'value': 'Sales'
-                            },
-                            {
-                                'label': 'Other',
-                                'value': 'Other'
-                            },
-                            {
-                                'label': 'All',
-                                'value': 'all'
-                            }
-                        ],
-                        value='all'
-                    ),
-                    "Tipo de Recurso en CRM: ", dcc.Dropdown(
-                        id='resource-type-desc',
-                        options=[
-                            {
-                                'label': 'Contact',
-                                'value': 'contact'
-                            },
-                            {
-                                'label': 'Deal',
-                                'value': 'deal'
-                            },
-                            {
-                                'label': 'Lead',
-                                'value': 'lead'
-                            },
-                            {
-                                'label': 'All',
-                                'value': 'all'
-                            }
-                        ],
-                        value='all'
-                    ),
-                    "Parte del producto: ", dcc.Dropdown(
-                        id='product-part-desc',
-                        options=[
-                            {
-                                'label': 'Agenda',
-                                'value': 'agenda'
-                            },
-                            {
-                                'label': 'Consulta',
-                                'value': 'consulta'
-                            },
-                            {
-                                'label': 'Facturación',
-                                'value': 'facturación'
-                            },
-                            {
-                                'label': 'Información médica',
-                                'value': 'información médica'
-                            },
-                            {
-                                'label': 'Perfil',
-                                'value': 'perfil'
-                            },
-                            {
-                                'label': 'Servicio',
-                                'value': 'servicio'
-                            },
-                            {
-                                'label': 'All',
-                                'value': 'all'
-                            }
-                        ],
-                        value='all'
-                    )
-                ]),
+                    html.Div([
+                        html.P("Departamento de la Compañia: ", style={
+                            "margin-top": "0.5rem",
+                            "margin-bottom": "0.5rem"
+                        }),
+                        dcc.Dropdown(
+                            id='creator-department-desc',
+                            options=[
+                                {
+                                    'label': 'Customer Success',
+                                    'value': 'Customer Success'
+                                },
+                                {
+                                    'label': 'Sales',
+                                    'value': 'Sales'
+                                },
+                                {
+                                    'label': 'Other',
+                                    'value': 'Other'
+                                },
+                                {
+                                    'label': 'All',
+                                    'value': 'all'
+                                }
+                            ],
+                            value='all'
+                        ),
+                    ], style={
+                        'display': 'inline-block',
+                        'width': '30%',
+                        'margin': '0 10px'
+                    }),
+                    html.Div([
+                        html.P("Tipo de Recurso en CRM: ", style={
+                            "margin-top": "0.5rem",
+                            "margin-bottom": "0.5rem"
+                        }),
+                        dcc.Dropdown(
+                            id='resource-type-desc',
+                            options=[
+                                {
+                                    'label': 'Contact',
+                                    'value': 'contact'
+                                },
+                                {
+                                    'label': 'Deal',
+                                    'value': 'deal'
+                                },
+                                {
+                                    'label': 'Lead',
+                                    'value': 'lead'
+                                },
+                                {
+                                    'label': 'All',
+                                    'value': 'all'
+                                }
+                            ],
+                            value='all'
+                        ),
+                    ], style={
+                        'display': 'inline-block',
+                        'width': '30%',
+                        'margin': '0 10px'
+                    }),
+                    html.Div([
+                        html.P("Parte del producto: ", style={
+                            "margin-top": "0.5rem",
+                            "margin-bottom": "0.5rem"
+                        }),
+                        dcc.Dropdown(
+                            id='product-part-desc',
+                            options=[
+                                {
+                                    'label': 'Agenda',
+                                    'value': 'agenda'
+                                },
+                                {
+                                    'label': 'Consulta',
+                                    'value': 'consulta'
+                                },
+                                {
+                                    'label': 'Facturación',
+                                    'value': 'facturación'
+                                },
+                                {
+                                    'label': 'Información médica',
+                                    'value': 'información médica'
+                                },
+                                {
+                                    'label': 'Perfil',
+                                    'value': 'perfil'
+                                },
+                                {
+                                    'label': 'Servicio',
+                                    'value': 'servicio'
+                                },
+                                {
+                                    'label': 'All',
+                                    'value': 'all'
+                                }
+                            ],
+                            value='all'
+                        )
+                    ], style={
+                        'display': 'inline-block',
+                        'width': '30%',
+                        'margin': '0 10px'
+                    })
+                ], style={
+                    'border': "1px solid black",
+                    'padding': '10px'
+                }),
                 html.Div([
-                    dcc.Graph(
-                        id='des-uni-freq-graph'
-                    ),
-                    dcc.Graph(
-                        id='des-biuni-freq-graph'
-                    ),
-                    dcc.Graph(
-                        id='des-uni-cloud-graph'
-                    ),
-                    dcc.Graph(
-                        id='des-biuni-cloud-graph'
-                    )
+                    html.Div([
+                        html.Div([
+                            dcc.Graph(
+                                id='des-uni-freq-graph'
+                            ),
+                        ], style={
+                            'display': 'inline-block',
+                            'width': '49%'
+                        }),
+                        html.Div([
+                            dcc.Graph(
+                                id='des-biuni-freq-graph'
+                            )
+                        ], style={
+                            'display': 'inline-block',
+                            'width': '49%'
+                        }),
+                    ]),
+                    html.Div([
+                        html.Div([
+                            dcc.Graph(
+                                id='des-uni-cloud-graph'
+                            ),
+                        ], style={
+                            'display': 'inline-block',
+                            'width': '49%'
+                        }),
+                        html.Div([
+                            dcc.Graph(
+                                id='des-biuni-cloud-graph'
+                            )
+                        ], style={
+                            'display': 'inline-block',
+                            'width': '49%'
+                        }),
+                    ]),
                 ])
             ], style={
                 'margin': 'auto',
-                'width': '50%',
-                'border': "2px solid black",
-                'padding': '10px'
-        })
-    elif tab == 'tab-1':
-        return html.Div([
-            html.H6("Predicción automática de comentarios!", style={
-                "text-align": "center"
+                'width': '100%',
+            })
+    elif tab == 'pred':
+        return dbc.Card([
+            html.P("Predicción automática de comentarios!", style={
+                "text-align": "center",
+
             }),
-            html.Div(["Digite el comentario: ",
-                      dcc.Input(
-                          id='comment',
-                          value='Mejorar letra de receta',
-                          type='text')], style={
-                "text-align": "center"
-            }),
-            html.Br(),
             html.Div([
-                "Departamento de la Compañia: ", dcc.Dropdown(
+                html.P("Digite el comentario: ", style={
+                    "display": "inline-block"
+                }),
+                dbc.Input(
+                    id='comment',
+                    value='Mejorar letra de receta',
+                    type='text', style={
+                        "display": "inline-block",
+                        "width": "60%",
+                        "margin": "0px 15px",
+                    })],
+                style={
+                    "text-align": "center",
+                }
+            ),
+            html.Br(),
+            dbc.Card([
+                html.P("Departamento de la Compañia: ", style={
+                    "display": "inline-block",
+                    "margin-top": "0.5rem",
+                    "margin-bottom": "0.5rem"
+                }),
+                dcc.Dropdown(
                     id='creator-department-pred',
                     options=[
                         {
@@ -187,9 +258,18 @@ def render_content(tab):
                             'value': 'Other'
                         }
                     ],
-                    value='Customer Success'
+                    value='Customer Success',
+                    style={
+                        "display": "inline-block",
+                        "width": "90%",
+                    }
                 ),
-                "Tipo de Recurso en CRM: ", dcc.Dropdown(
+                html.P("Tipo de Recurso en CRM: ", style={
+                    "display": "inline-block",
+                    "margin-top": "0.5rem",
+                    "margin-bottom": "0.5rem"
+                }),
+                dcc.Dropdown(
                     id='resource-type-pred',
                     options=[
                         {
@@ -205,7 +285,11 @@ def render_content(tab):
                             'value': 'lead'
                         }
                     ],
-                    value='contact'
+                    value='contact',
+                    style={
+                        "display": "inline-block",
+                        "width": "90%",
+                    }
                 )
             ], style={
                 'margin': 'auto',
@@ -214,22 +298,31 @@ def render_content(tab):
                 'padding': '10px'
             }),
 
-            html.Div(id='true-label', style={
+            html.P(id='true-label', style={
                 'font-size': '2.5em',
                 'text-align': 'center'
             }),
-            html.Table([
-                html.Tr([html.Td(['Agenda']), html.Td(id='agenda')]),
-                html.Tr([html.Td(['Consulta']), html.Td(id='checkup')]),
-                html.Tr([html.Td(['Facturación']), html.Td(id='billing')]),
-                html.Tr([html.Td(['Información Médica']),
-                         html.Td(id='medical-record')]),
-                html.Tr([html.Td(['Perfil']), html.Td(id='profile')]),
-                html.Tr([html.Td(['Servicio']), html.Td(id='service')]),
-            ], style={
-                "margin": "auto",
-                'width': "70%"
-            })
+            dbc.Table(
+                [
+                    html.Thead(html.Tr([
+                        html.Th("Sección de Hulipractice"),
+                        html.Th("Predicción")]))
+                ] +
+                [
+                    html.Tr([html.Td(['Agenda']), html.Td(id='agenda')]),
+                    html.Tr([html.Td(['Consulta']), html.Td(id='checkup')]),
+                    html.Tr([html.Td(['Facturación']), html.Td(id='billing')]),
+                    html.Tr([html.Td(['Información Médica']),
+                             html.Td(id='medical-record')]),
+                    html.Tr([html.Td(['Perfil']), html.Td(id='profile')]),
+                    html.Tr([html.Td(['Servicio']), html.Td(id='service')]),
+                ], style={
+                    "margin": "auto",
+                    'width': "70%"
+                }, bordered=True,
+                hover=True,
+                responsive=True,
+                striped=True)
         ], style={
             'margin': 'auto',
             'width': '50%',
