@@ -16,7 +16,7 @@ from nltk import word_tokenize
 # https://towardsdatascience.com/how-to-use-docker-to-deploy-a-dashboard-app-on-aws-8df5fb322708
 
 app = dash.Dash(__name__,
-                external_stylesheets=[dbc.themes.LUMEN],
+                external_stylesheets=[dbc.themes.LUX],
                 suppress_callback_exceptions=True)
 model = None
 
@@ -813,13 +813,9 @@ def render_no_sub_content(tab):
                 'width': '49%'
             }),
             html.Div([
-                html.Label("Agrupación según mejores parámetros K-Medias",
+                html.Label("Agrupación de comentarios según mejores parámetros K-Medias",
                            style={
-                               "font-family":
-                                   "Open Sans, verdana, arial, sans-serif",
-                               "margin-bottom": "3.5rem",
-                               "line-height": "1.5",
-                               "color": "#222"
+                               "margin-bottom": "3.5rem"
                            }),
                 dbc.Table(
                     [
