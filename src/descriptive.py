@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import plotly.express as px
 import plotly
 import plotly.graph_objs as go
@@ -7,13 +6,8 @@ import random
 from nltk import word_tokenize, bigrams, FreqDist
 from nltk.util import ngrams
 
-comments = pd.read_csv('/data-analysis/include/proccesed_comments.csv',
-                       index_col='id')
-comments['tokens'] = comments.apply(lambda row: word_tokenize(row['comment']),
-                                    axis=1)
 
-
-def get_desc_graph(part, creator, resource):
+def get_desc_graph(part, creator, resource, comments):
     unigramdist = FreqDist()
     bigramfdist = FreqDist()
     fc = comments

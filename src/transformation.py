@@ -68,7 +68,7 @@ def predict(model, comment, creator_department, resource_type):
     label = model.predict(to_predict)[0]
     prob = model.predict_proba(to_predict)[0]
 
-    return label.capitalize(), ['{}%'.format(x) for
+    return 'Predicción: {}'.format(label.capitalize()), ['{}%'.format(x) for
                                 x in np.round(np.array([p * 100
                                                         for p in prob]), 2)]
 
